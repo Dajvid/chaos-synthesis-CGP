@@ -50,20 +50,20 @@ def objective(individual):
 
 
 if __name__ == '__main__':
-    population_params = {"n_parents": 10, "mutation_rate": 0.5, "seed": 0}
+    population_params = {"n_parents": 10, "mutation_rate": 0.5, "seed": 10}
 
     genome_params = {
         "n_inputs": 2,
         "n_outputs": 1,
         "n_columns": 10,
-        "n_rows": 2,
-        "levels_back": 5,
-        "primitives": (cgp.Add, cgp.Sub, cgp.Mul, cgp.Div),
+        "n_rows": 3,
+        "levels_back": 3,
+        "primitives": (cgp.Add, cgp.Sub, cgp.Div, cgp.Mul, cgp.ConstantFloat),
     }
 
-    ea_params = {"n_offsprings": 10, "n_breeding": 10, "tournament_size": 2, "n_processes": 2}
+    ea_params = {"n_offsprings": 100, "n_breeding": 200, "tournament_size": 2, "n_processes": 4}
 
-    evolve_params = {"max_generations": 1000, "min_fitness": 0.0}
+    evolve_params = {"max_generations": 100000000, "min_fitness": 0.0}
 
     pop = cgp.Population(**population_params, genome_params=genome_params)
     ea = cgp.ea.MuPlusLambda(**ea_params)
