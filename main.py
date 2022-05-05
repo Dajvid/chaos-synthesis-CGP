@@ -1,6 +1,10 @@
 import cgp
 import nolds
 import numpy as np
+import warnings
+import matplotlib.pyplot as plt
+
+from PIL import Image
 
 chaotic_parameter_space = np.arange(3.6, 4.0, 0.1)
 
@@ -12,6 +16,7 @@ def objective(individual):
 
     sequences = np.zeros((len(chaotic_parameter_space), 500), "float")
     sequences[:, 0] = 0.5
+    # todo rewrite to use numpy better
 
     for param_index, A in enumerate(chaotic_parameter_space):
         for i in range(1, 500):
@@ -49,7 +54,40 @@ def objective(individual):
     return individual
 
 
+def test_expr(A, x):
+    # x_1*(-x_0*x_1 + x_0 - x_1)
+    return x * (-A * x + A - x)
+
+
+def test():
+    results = np.zeros(1000)
+    results[0] = 0.6
+    for i in range(1, 1000):
+        results[i] = test_expr(3.6, results[i - 1])
+
+    plt.plot(results, 'bo')
+    plt.show()
+
+
+def bifurcation(f, a=np.linspace(2, 4, 1000), iterations=1000):
+    fig, ax = plt.subplots(1, 1)
+    x = 0.5
+
+    for _ in range(iterations):
+        x = f(a, x)
+        ax.plot(a, x, ',k', alpha=0.25)
+
+    plt.title("x * (-A * x + A - x)")
+    plt.xlabel('A')
+    plt.ylabel('x')
+    plt.savefig("bifurcation.png")
+
+
 if __name__ == '__main__':
+    bifurcation(test_expr)
+    exit()
+
+    warnings.filterwarnings("ignore")
     population_params = {"n_parents": 10, "mutation_rate": 0.5, "seed": 10}
 
     genome_params = {
