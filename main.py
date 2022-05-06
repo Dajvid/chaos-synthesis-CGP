@@ -4,15 +4,21 @@ import numpy as np
 import warnings
 import matplotlib.pyplot as plt
 
-from PIL import Image
-
 chaotic_parameter_space = np.arange(3.6, 4.0, 0.1)
+seed = 10
+history = {}
+history["fitness_parents"] = []
+regression_data = (None, None) # initial X, 2D np array of A and values
 
 
-def objective(individual):
+def recording_callback(pop):
+    history["fitness_parents"].append(pop.fitness_parents())
+
+
+def fitness_chaotic(individual):
     m = 10
     f = individual.to_func()
-    invalid_fitness = len(chaotic_parameter_space) * 500.0 + 99999.0
+    invalid_fitness = -1 * (len(chaotic_parameter_space) * 500.0 + 99999.0)
 
     sequences = np.zeros((len(chaotic_parameter_space), 500), "float")
     sequences[:, 0] = 0.5
@@ -36,7 +42,7 @@ def objective(individual):
             # calculate Lyapunov exponent of the series
             try:
                 lyapunov = nolds.lyap_r(sequence)
-            except (ZeroDivisionError, ValueError):
+            except:
                 individual.fitness = invalid_fitness
                 return individual
 
@@ -44,12 +50,12 @@ def objective(individual):
                 lyapunov_cumulative += lyapunov
 
         if lyapunov_cumulative < 0:
-            individual.fitness = -lyapunov_cumulative
+            individual.fitness = lyapunov_cumulative
         if lyapunov_cumulative == 0:
             print(f"Good I found one {individual.to_sympy()}")
             individual.fitness = 0.0
     else:
-        individual.fitness = float(duplicates)
+        individual.fitness = -1.0 * duplicates
 
     return individual
 
@@ -83,27 +89,28 @@ def bifurcation(f, a=np.linspace(2, 4, 1000), iterations=1000):
     plt.savefig("bifurcation.png")
 
 
-if __name__ == '__main__':
-    bifurcation(test_expr)
-    exit()
-
-    warnings.filterwarnings("ignore")
-    population_params = {"n_parents": 10, "mutation_rate": 0.5, "seed": 10}
-
+def evolve_new_chaos(mutation_rate=0.5, n_columns=10, n_rows=3, lback=3, turn_size=2,
+                 primitives=(cgp.Add, cgp.Sub, cgp.Div, cgp.Mul, cgp.ConstantFloat)):
     genome_params = {
         "n_inputs": 2,
         "n_outputs": 1,
-        "n_columns": 10,
-        "n_rows": 3,
-        "levels_back": 3,
-        "primitives": (cgp.Add, cgp.Sub, cgp.Div, cgp.Mul, cgp.ConstantFloat),
+        "n_columns": n_columns,
+        "n_rows": n_rows,
+        "levels_back": lback,
+        "primitives": primitives,
     }
 
-    ea_params = {"n_offsprings": 100, "n_breeding": 200, "tournament_size": 2, "n_processes": 4}
+    evolve_params = {"max_generations": 1000, "min_fitness": 1.0}
 
-    evolve_params = {"max_generations": 100000000, "min_fitness": 0.0}
+    pop = cgp.Population(n_parents=10, mutation_rate=mutation_rate, seed=seed, genome_params=genome_params)
+    ea = cgp.ea.MuPlusLambda(n_offsprings=100, n_breeding=200, tournament_size=turn_size, n_processes=4)
 
-    pop = cgp.Population(**population_params, genome_params=genome_params)
-    ea = cgp.ea.MuPlusLambda(**ea_params)
+    cgp.evolve(pop, fitness_chaotic, ea, **evolve_params, print_progress=True, callback=recording_callback)
 
-    cgp.evolve(pop, objective, ea, **evolve_params, print_progress=True)
+
+if __name__ == '__main__':
+    # bifurcation(test_expr)
+
+    warnings.filterwarnings("ignore")
+
+    evolve_new_chaos()
