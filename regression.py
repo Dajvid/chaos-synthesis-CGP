@@ -1,8 +1,10 @@
+import random
+import sys
+
 import cgp
 import numpy as np
 import warnings
 
-seed = 10
 regression_data = [None, None, None] # initial X, np.array of A values, np.array of X values
 
 
@@ -34,13 +36,15 @@ def fitness_regression_mse(individual):
 
         individual.fitness = -1.0 * np.sum(np.square(x - regression_data[2]))
     except:
-        individual.fitness = -99999999999999.0
+        individual.fitness = -np.inf
 
     return individual
 
 
-def evolve_known(data, mutation_rate=0.5, n_columns=10, n_rows=3, lback=3, turn_size=2,
-                 primitives=(cgp.Add, cgp.Sub, cgp.Div, cgp.Mul, cgp.ConstantFloat)):
+def evolve_known(data, mutpb=0.5, n_columns=10, n_rows=3, lback=3, turn_size=2,
+                 fitness=fitness_regression_mse, popsize=100, ngen=1000,
+                 primitives=(cgp.Add, cgp.Sub, cgp.Div, cgp.Mul, cgp.ConstantFloat),
+                 seed=random.randint(0, 2**32 - 1)):
     global regression_data
     regression_data = data
 
@@ -53,13 +57,13 @@ def evolve_known(data, mutation_rate=0.5, n_columns=10, n_rows=3, lback=3, turn_
         "primitives": primitives,
     }
 
-    evolve_params = {"max_generations": 1000, "min_fitness": 0.0}
+    evolve_params = {"max_generations": ngen, "min_fitness": 0.0}
 
-    pop = cgp.Population(n_parents=10, mutation_rate=mutation_rate, seed=seed, genome_params=genome_params)
-    ea = cgp.ea.MuPlusLambda(n_offsprings=100, n_breeding=200, tournament_size=turn_size, n_processes=4)
+    pop = cgp.Population(n_parents=10, mutation_rate=mutpb, seed=seed, genome_params=genome_params)
+    ea = cgp.ea.MuPlusLambda(n_offsprings=popsize, n_breeding=200, tournament_size=turn_size, n_processes=4)
 
-    cgp.evolve(pop, fitness_regression_mse, ea, **evolve_params, print_progress=True)
-    print(pop.champion.to_sympy())
+    cgp.evolve(pop, fitness, ea, **evolve_params, print_progress=True)
+    return pop
 
 
 if __name__ == '__main__':
