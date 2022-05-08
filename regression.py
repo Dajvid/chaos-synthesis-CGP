@@ -67,7 +67,7 @@ def evolve_known(data, mutpb=0.5, n_columns=6, n_rows=3, lback=3, turn_size=3,
 
     evolve_params = {"max_generations": ngen, "min_fitness": 0.0}
 
-    pop = cgp.Population(n_parents=popsize/10, mutation_rate=mutpb, seed=seed, genome_params=genome_params)
+    pop = cgp.Population(n_parents=popsize // 10, mutation_rate=mutpb, seed=seed, genome_params=genome_params)
     ea = cgp.ea.MuPlusLambda(n_offsprings=popsize, n_breeding=2*popsize, tournament_size=turn_size, n_processes=1)
 
     cgp.evolve(pop, fitness, ea, **evolve_params, print_progress=True)
