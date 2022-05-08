@@ -80,7 +80,7 @@ if __name__ == '__main__':
     c = 0.5
     a = np.loadtxt(f"system2_{c}.txt")
     x = np.loadtxt(f"system2_{c}.txt")
-    pop = evolve_known((c, a, x), popsize=10, mutpb=0.5, ngen=np.inf, n_columns=7,
+    pop = evolve_known((c, a, x), popsize=100, mutpb=0.5, ngen=np.inf, n_columns=7,
                        primitives=(cgp.Add, cgp.Sub, cgp.Mul, cgp.ConstantFloat))
     print(pop.champion.to_sympy())
     # sample_data(system3, "system3", np.linspace(3.5, 4, 10))
