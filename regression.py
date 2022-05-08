@@ -49,7 +49,7 @@ def fitness_regression_mse(individual):
     return individual
 
 
-def evolve_known(data, mutpb=0.5, n_columns=6, n_rows=3, lback=3, turn_size=2,
+def evolve_known(data, mutpb=0.5, n_columns=6, n_rows=3, lback=3, turn_size=3,
                  fitness=fitness_regression_mse, popsize=100, ngen=1000,
                  primitives=(cgp.Add, cgp.Sub, cgp.Div, cgp.Mul, cgp.ConstantFloat)):
     global regression_data
@@ -67,7 +67,7 @@ def evolve_known(data, mutpb=0.5, n_columns=6, n_rows=3, lback=3, turn_size=2,
 
     evolve_params = {"max_generations": ngen, "min_fitness": 0.0}
 
-    pop = cgp.Population(n_parents=10, mutation_rate=mutpb, seed=seed, genome_params=genome_params)
+    pop = cgp.Population(n_parents=popsize/10, mutation_rate=mutpb, seed=seed, genome_params=genome_params)
     ea = cgp.ea.MuPlusLambda(n_offsprings=popsize, n_breeding=2*popsize, tournament_size=turn_size, n_processes=1)
 
     cgp.evolve(pop, fitness, ea, **evolve_params, print_progress=True)
