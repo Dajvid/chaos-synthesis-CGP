@@ -12,6 +12,14 @@ def logistic_map(a, x):
     return a * x * (1 - x)
 
 
+def system2(a, x):
+    return 2 * x - x * (a + x)
+
+
+def system3(a, x):
+    return x * (a - x - a * x)
+
+
 def sample_data(f, file_name, a=np.linspace(3.4, 4, 10), iterations=100, start=0.5):
     x = np.zeros((len(a), iterations))
     x[:, 0] = 0.5
@@ -41,12 +49,12 @@ def fitness_regression_mse(individual):
     return individual
 
 
-def evolve_known(data, mutpb=0.5, n_columns=10, n_rows=3, lback=3, turn_size=2,
+def evolve_known(data, mutpb=0.5, n_columns=6, n_rows=3, lback=3, turn_size=2,
                  fitness=fitness_regression_mse, popsize=100, ngen=1000,
-                 primitives=(cgp.Add, cgp.Sub, cgp.Div, cgp.Mul, cgp.ConstantFloat),
-                 seed=random.randint(0, 2**32 - 1)):
+                 primitives=(cgp.Add, cgp.Sub, cgp.Div, cgp.Mul, cgp.ConstantFloat)):
     global regression_data
     regression_data = data
+    seed = random.randint(0, 2 ** 32 - 1)
 
     genome_params = {
         "n_inputs": 2,
@@ -60,15 +68,19 @@ def evolve_known(data, mutpb=0.5, n_columns=10, n_rows=3, lback=3, turn_size=2,
     evolve_params = {"max_generations": ngen, "min_fitness": 0.0}
 
     pop = cgp.Population(n_parents=10, mutation_rate=mutpb, seed=seed, genome_params=genome_params)
-    ea = cgp.ea.MuPlusLambda(n_offsprings=popsize, n_breeding=200, tournament_size=turn_size, n_processes=4)
+    ea = cgp.ea.MuPlusLambda(n_offsprings=popsize, n_breeding=2*popsize, tournament_size=turn_size, n_processes=1)
 
     cgp.evolve(pop, fitness, ea, **evolve_params, print_progress=True)
+    print(f"seed was: {seed}")
     return pop
 
 
 if __name__ == '__main__':
     warnings.filterwarnings("ignore")
     c = 0.5
-    a = np.loadtxt(f"logistic_map_space_{c}.txt")
-    x = np.loadtxt(f"logistic_map_{c}.txt")
-    evolve_known((c, a, x))
+    a = np.loadtxt(f"system2_{c}.txt")
+    x = np.loadtxt(f"system2_{c}.txt")
+    pop = evolve_known((c, a, x), popsize=10, mutpb=0.5, ngen=np.inf, n_columns=7,
+                       primitives=(cgp.Add, cgp.Sub, cgp.Mul, cgp.ConstantFloat))
+    print(pop.champion.to_sympy())
+    # sample_data(system3, "system3", np.linspace(3.5, 4, 10))
