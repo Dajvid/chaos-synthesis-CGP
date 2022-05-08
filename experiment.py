@@ -76,10 +76,6 @@ def benchmark_param(kwargs,  data, name, values, evaluations=30, visualize=False
         f.write(f"kwargs: {kwargs}")
 
 
-def experiment_find_logistic_map():
-
-
-
 if __name__ == '__main__':
     warnings.filterwarnings("ignore")
     out_dir = f"experiments-output-" + datetime.datetime.now().strftime("%d-%m-%Y-(%H:%M:%S)")
@@ -88,16 +84,18 @@ if __name__ == '__main__':
     c = 0.5
     a = np.loadtxt(f"logistic_map_space_{c}.txt")
     x = np.loadtxt(f"logistic_map_{c}.txt")
-    # benchmark_popsize(default_kwargs, data=(c, a, x), output_path=os.path.join(out_dir, "population-size"),
-    #                   visualize=True)
-    # benchmark_param(default_kwargs, (c, a, x), "mutpb", [0.2, 0.4, 0.5, 0.6, 0.8],
-    #                 output_path=os.path.join(out_dir, "mutpb"), xlabel="mutation probability",
-    #                 ylabel="fitness")
 
-    # benchmark_param(default_kwargs, (c, a, x), "n_columns", [3, 5, 7, 9, 11],
-    #                 output_path=os.path.join(out_dir, "n_columns"), xlabel="number of collumns",
-    #                 ylabel="fitness")
+    benchmark_popsize(default_kwargs, data=(c, a, x), output_path=os.path.join(out_dir, "population-size"),
+                      visualize=True)
+
+    benchmark_param(default_kwargs, (c, a, x), "mutpb", [0.2, 0.4, 0.5, 0.6, 0.8],
+                    output_path=os.path.join(out_dir, "mutpb"), xlabel="mutation probability",
+                    ylabel="fitness")
+
+    benchmark_param(default_kwargs, (c, a, x), "n_columns", [3, 5, 7, 9, 11],
+                    output_path=os.path.join(out_dir, "n_columns"), xlabel="number of collumns",
+                    ylabel="fitness")
 
     benchmark_param(default_kwargs, (c, a, x), "lback", [1, 2, 3, 4, 5, 6, 7, 8],
                     output_path=os.path.join(out_dir, "lback"), xlabel="lback",
-                    ylabel="fitness"
+                    ylabel="fitness")

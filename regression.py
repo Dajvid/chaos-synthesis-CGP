@@ -49,7 +49,7 @@ def fitness_regression_mse(individual):
     return individual
 
 
-def evolve_known(data, mutpb=0.5, n_columns=6, n_rows=3, lback=3, turn_size=3,
+def evolve_known(data, mutpb=0.5, n_columns=6, n_rows=3, lback=6, turn_size=3,
                  fitness=fitness_regression_mse, popsize=100, ngen=1000,
                  primitives=(cgp.Add, cgp.Sub, cgp.Div, cgp.Mul, cgp.ConstantFloat)):
     global regression_data
@@ -78,9 +78,9 @@ def evolve_known(data, mutpb=0.5, n_columns=6, n_rows=3, lback=3, turn_size=3,
 if __name__ == '__main__':
     warnings.filterwarnings("ignore")
     c = 0.5
-    a = np.loadtxt(f"system2_{c}.txt")
-    x = np.loadtxt(f"system2_{c}.txt")
-    pop = evolve_known((c, a, x), popsize=100, mutpb=0.5, ngen=np.inf, n_columns=7,
-                       primitives=(cgp.Add, cgp.Sub, cgp.Mul, cgp.ConstantFloat))
+    a = np.loadtxt(f"system3_{c}.txt")
+    x = np.loadtxt(f"system3_{c}.txt")
+    pop = evolve_known((c, a, x), popsize=100, mutpb=0.5, ngen=np.inf, n_columns=8,
+                       primitives=(cgp.Sub, cgp.Mul))
     print(pop.champion.to_sympy())
     # sample_data(system3, "system3", np.linspace(3.5, 4, 10))

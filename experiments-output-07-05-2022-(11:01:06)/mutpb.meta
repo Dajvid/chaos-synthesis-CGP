@@ -1,0 +1,1 @@
+mutpb: [0.2, 0.4, 0.5, 0.6, 0.8]kwargs: {'fitness': <function fitness_regression_mse at 0x7fdb3bd1ca60>, 'popsize': 100, 'mutpb': 0.8, 'ngen': 500, 'n_columns': 10, 'n_rows': 3, 'lback': 3, 'turn_size': 2, 'primitives': (<class 'cgp.node.Add'>, <class 'cgp.node.Sub'>, <class 'cgp.node.Mul'>, <class 'cgp.node.Div'>, <class 'cgp.node.ConstantFloat'>)}

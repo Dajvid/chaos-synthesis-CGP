@@ -1,0 +1,1 @@
+lback: [1, 2, 3, 4, 5, 6, 7, 8]kwargs: {'fitness': <function fitness_regression_mse at 0x7faeb476faf0>, 'popsize': 100, 'mutpb': 0.5, 'ngen': 500, 'n_columns': 8, 'n_rows': 3, 'lback': 8, 'turn_size': 2, 'primitives': (<class 'cgp.node.Add'>, <class 'cgp.node.Sub'>, <class 'cgp.node.Mul'>, <class 'cgp.node.Div'>, <class 'cgp.node.ConstantFloat'>)}
